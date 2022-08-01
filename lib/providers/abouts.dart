@@ -15,7 +15,7 @@ class Abouts with ChangeNotifier {
 
   Future<void> initialData() async {
     Uri url = Uri.parse(
-        'https://kamus-632a9-default-rtdb.asia-southeast1.firebasedatabase.app/about.json');
+        'https://kamus-69b35-default-rtdb.asia-southeast1.firebasedatabase.app/about.json');
 
     var resultGetData = await http.get(url);
 

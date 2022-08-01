@@ -18,7 +18,7 @@ class Words with ChangeNotifier {
 
   Future<void> initialData() async {
     Uri url = Uri.parse(
-        'https://kamus-632a9-default-rtdb.asia-southeast1.firebasedatabase.app/kamus.json');
+        'https://kamus-69b35-default-rtdb.asia-southeast1.firebasedatabase.app//kamus.json');
 
     var resultGetData = await http.get(url);
 

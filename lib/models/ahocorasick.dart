@@ -3,7 +3,8 @@
 import 'word.dart';
 
 class AhoCorasick {
-  List<Word> keywords = [];
+  // List<Word> keywords = [];
+  String keywords = "";
   AhoCorasick(this.keywords) {
     _buildTables(keywords);
   }
@@ -11,30 +12,29 @@ class AhoCorasick {
   var gotoFn_ = {};
   var output_ = {};
   var failure_ = {};
+  var stringlength = 0;
 
-  _buildTables(List<Word> keywords) {
+  _buildTables(String string) {
     var gotoFn = {0: {}};
     var output = {};
     var state = 0;
 
-    for (var i = 0; i < keywords.length; i++) {
-      var curr = 0;
-      var id = keywords[i].id;
-      var word = keywords[i].word.toLowerCase();
-      for (var j = 0; j < word.length; j++) {
-        var l = word[j];
-        if (gotoFn[curr]!.isNotEmpty & gotoFn[curr]!.containsKey(l)) {
-          curr = gotoFn[curr]![l];
-          output[curr].add(id);
-        } else {
-          state++;
-          gotoFn[curr]![l] = state;
-          gotoFn[state] = {};
-          curr = state;
-          output[state] = [id];
-        }
+    var curr = 0;
+    for (var j = 0; j < string.length; j++) {
+      var l = string[j];
+      if (gotoFn[curr]!.isNotEmpty & gotoFn[curr]!.containsKey(l)) {
+        curr = gotoFn[curr]![l];
+        // output[curr].add(string);
+      } else {
+        state++;
+        gotoFn[curr]![l] = state;
+        gotoFn[state] = {};
+        curr = state;
+        output[state] = [];
       }
     }
+
+    output[curr].add(string);
 
     var failure = {};
     var xs = [];
@@ -67,25 +67,29 @@ class AhoCorasick {
     gotoFn_ = gotoFn;
     output_ = output;
     failure_ = failure;
+    stringlength = string.length;
   }
 
-  search(String string) {
+  search(List<Word> keywords) {
     var state = 0;
-    var result = [];
-    for (var i = 0; i < string.length; i++) {
-      var l = string[i];
-      while ((state > 0) & !(gotoFn_[state].containsKey(l))) {
-        // state = failure_[state];
-        return [];
-      }
-      if (!(gotoFn_[state].containsKey(l))) {
-        continue;
-      }
+    // var result = [];
+    List<Word> result = [];
+    for (var i = 0; i < keywords.length; i++) {
+      var word = keywords[i].word.toLowerCase();
+      for (var j = 0; j < word.length; j++) {
+        var l = word[j];
+        while ((state > 0) & !(gotoFn_[state].containsKey(l))) {
+          state = failure_[state];
+          // return;
+        }
+        if (!(gotoFn_[state].containsKey(l))) {
+          continue;
+        }
 
-      state = gotoFn_[state][l];
-      if ((i + 1) == string.length) {
-        if (output_[state].length > 0) {
-          result = output_[state];
+        state = gotoFn_[state][l];
+        if (output_[state].length > 0 && (j+1) >= stringlength) {
+          result.add( keywords[i] );
+          break;
         }
       }
     }
